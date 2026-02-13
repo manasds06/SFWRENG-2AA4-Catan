@@ -9,7 +9,7 @@ public class Dice {
 		rng = new Random();
 	}
 
-	public int roll2d6() {
+	public int roll() {
 		return rng.nextInt(6) + 1 + rng.nextInt(6) + 1;
 	}
 }

@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class CatanSimulator {
 	private int currentRound;
@@ -14,22 +15,8 @@ public class CatanSimulator {
 	private List<Agent> agents;
 	private MoveValidator rules;
 
-	/** Primary constructor: reads turn count from config file. */
 	public CatanSimulator(String configPath) {
 		this.maxRounds = readTurnsFromConfig(configPath);
-		this.currentRound = 0;
-		this.board = new Board();
-		this.dice = new Dice();
-		this.rules = new MoveValidator();
-		this.agents = new ArrayList<>();
-		for (int i = 0; i < 4; i++) {
-			agents.add(new RandomAgent(i, rules));
-		}
-	}
-
-	/** Secondary constructor: override turn count directly (useful for testing/demo). */
-	public CatanSimulator(String configPath, int maxRoundsOverride) {
-		this.maxRounds = maxRoundsOverride;
 		this.currentRound = 0;
 		this.board = new Board();
 		this.dice = new Dice();
@@ -61,7 +48,7 @@ public class CatanSimulator {
 	public void runSimulation() {
 		board.setupMap();
 
-		// Setup phase: each agent places 2 settlements and 2 roads (snake order, no cost)
+		// Setup phase: each agent places 2 settlements and 2 roads
 		for (Agent a : agents) {
 			doSetupPlacement(a, false);
 		}
@@ -99,7 +86,7 @@ public class CatanSimulator {
 				}
 			}
 
-			// Place a road adjacent to the chosen settlement (free)
+			// Place a road adjacent to the chosen settlement
 			List<Edge> roadOptions = board.getAvailableEdgesForRoad(a);
 			if (!roadOptions.isEmpty()) {
 				Edge road = null;
@@ -125,14 +112,14 @@ public class CatanSimulator {
 	}
 
 	private void runTurn(Agent a) {
-		int roll = dice.roll2d6();
+		int roll = dice.roll();
 		if (roll == 7) {
 			System.out.printf("[%d] / [%d]: Rolled 7 -- no resources produced%n", currentRound, a.getId());
 		} else {
 			board.distributeResources(roll);
 		}
 
-		// R1.8: agents with more than 7 cards MUST attempt to build
+		// agents with more than 7 cards attempts to build
 		if (a.checkHandLimit()) {
 			Action forced = a.chooseAction(board);
 			if (forced != null) {
