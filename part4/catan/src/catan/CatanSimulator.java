@@ -1,0 +1,160 @@
+package catan;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+public class CatanSimulator {
+	private int currentRound;
+	private int maxRounds;
+	private Board board;
+	private Dice dice;
+	private List<Agent> agents;
+	private MoveValidator rules;
+	private Random rng;
+
+	public CatanSimulator(String configPath) {
+		this.maxRounds = readTurnsFromConfig(configPath);
+		this.currentRound = 0;
+		this.board = new Board();
+		this.dice = new Dice();
+		this.rules = new MoveValidator();
+		this.rng = new Random();
+		this.agents = new ArrayList<>();
+		for (int i = 0; i < 4; i++) {
+			agents.add(new RandomAgent(i, rules));
+		}
+	}
+
+	private int readTurnsFromConfig(String configPath) {
+		try (BufferedReader br = new BufferedReader(new FileReader(configPath))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				line = line.trim();
+				if (line.startsWith("turns:")) {
+					int val = Integer.parseInt(line.substring("turns:".length()).trim());
+					if (val < 1) return 1;
+					if (val > 8192) return 8192;
+					return val;
+				}
+			}
+		} catch (IOException | NumberFormatException e) {
+			System.err.println("Warning: could not read config (" + e.getMessage() + "); defaulting to 100 rounds.");
+		}
+		return 100;
+	}
+
+	public void runSimulation() {
+		board.setupMap();
+
+		// Setup phase: each agent places 2 settlements and 2 roads
+		for (Agent a : agents) {
+			doSetupPlacement(a, false);
+		}
+		for (int i = agents.size() - 1; i >= 0; i--) {
+			doSetupPlacement(agents.get(i), true);
+		}
+
+		// Main game loop
+		for (currentRound = 1; currentRound <= maxRounds; currentRound++) {
+			for (Agent a : agents) {
+				runTurn(a);
+			}
+			printRoundSummary();
+			if (checkWinCondition()) break;
+		}
+	}
+
+	private void doSetupPlacement(Agent a, boolean grantResources) {
+		List<Node> available = board.getAvailableNodesForSetup(a);
+		if (!available.isEmpty()) {
+			Node chosen = available.get(rng.nextInt(available.size()));
+			chosen.owner = a;
+			chosen.building = BuildingType.SETTLEMENT;
+			a.addVictoryPoints(1);
+			logAction(0, a.getId(), "Setup: placed settlement at node " + chosen.getId());
+
+			// Second settlement grants one resource from each adjacent hex
+			if (grantResources) {
+				for (Hex hex : board.getHexes().values()) {
+					if (hex.terrain == TerrainType.DESERT) continue;
+					if (hex.getCorners().contains(chosen)) {
+						ResourceType res = terrainToResource(hex.terrain);
+						if (res != null) a.addResource(res, 1);
+					}
+				}
+			}
+
+			// Place a road adjacent to the chosen settlement (random choice)
+			List<Edge> adjacent = new ArrayList<>();
+			for (Edge e : chosen.edges) {
+				if (e.owner == null) adjacent.add(e);
+			}
+			if (!adjacent.isEmpty()) {
+				Edge road = adjacent.get(rng.nextInt(adjacent.size()));
+				road.owner = a;
+				logAction(0, a.getId(), "Setup: placed road at edge " + road.getId());
+			}
+		}
+	}
+
+	private ResourceType terrainToResource(TerrainType t) {
+		switch (t) {
+			case WOOD:  return ResourceType.WOOD;
+			case BRICK: return ResourceType.BRICK;
+			case SHEEP: return ResourceType.SHEEP;
+			case WHEAT: return ResourceType.WHEAT;
+			case ORE:   return ResourceType.ORE;
+			default:    return null;
+		}
+	}
+
+	private void runTurn(Agent a) {
+		int roll = dice.roll();
+		if (roll == 7) {
+			System.out.printf("[%d] / [%d]: Rolled 7 -- no resources produced%n", currentRound, a.getId());
+		} else {
+			board.distributeResources(roll);
+		}
+
+		// agents with more than 7 cards attempts to build
+		if (a.checkHandLimit()) {
+			Action forced = a.chooseAction(board);
+			if (forced != null) {
+				forced.execute(board, a);
+				logAction(currentRound, a.getId(), "[hand limit] " + forced.describe());
+			}
+		} else {
+			Action action = a.chooseAction(board);
+			if (action != null) {
+				action.execute(board, a);
+				logAction(currentRound, a.getId(), action.describe());
+			}
+		}
+	}
+
+	private boolean checkWinCondition() {
+		for (Agent a : agents) {
+			if (a.getVictoryPoints() >= 10) {
+				System.out.println("Player " + a.getId() + " wins with " + a.getVictoryPoints() + " VP!");
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void printRoundSummary() {
+		System.out.print("Round " + currentRound + " VP: ");
+		for (Agent a : agents) {
+			System.out.print("[P" + a.getId() + "=" + a.getVictoryPoints() + "] ");
+		}
+		System.out.println();
+	}
+
+	private void logAction(int round, int playerId, String action) {
+		System.out.printf("[%d] / [%d]: %s%n", round, playerId, action);
+	}
+}
