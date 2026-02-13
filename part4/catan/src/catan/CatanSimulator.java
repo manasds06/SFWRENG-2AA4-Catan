@@ -4,6 +4,9 @@
 
 package catan;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +40,9 @@ public class CatanSimulator {
 	 */
 	private MoveValidator rules;
 
-	public CatanSimulator(int maxRounds) {
-		this.maxRounds = maxRounds;
+	/** Primary constructor: reads turn count from config file. */
+	public CatanSimulator(String configPath) {
+		this.maxRounds = readTurnsFromConfig(configPath);
 		this.currentRound = 0;
 		this.board = new Board();
 		this.dice = new Dice();
@@ -47,6 +51,37 @@ public class CatanSimulator {
 		for (int i = 0; i < 4; i++) {
 			agents.add(new RandomAgent(i));
 		}
+	}
+
+	/** Secondary constructor: override turn count directly (useful for testing/demo). */
+	public CatanSimulator(String configPath, int maxRoundsOverride) {
+		this.maxRounds = maxRoundsOverride;
+		this.currentRound = 0;
+		this.board = new Board();
+		this.dice = new Dice();
+		this.rules = new MoveValidator();
+		this.agents = new ArrayList<>();
+		for (int i = 0; i < 4; i++) {
+			agents.add(new RandomAgent(i));
+		}
+	}
+
+	private int readTurnsFromConfig(String configPath) {
+		try (BufferedReader br = new BufferedReader(new FileReader(configPath))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				line = line.trim();
+				if (line.startsWith("turns:")) {
+					int val = Integer.parseInt(line.substring("turns:".length()).trim());
+					if (val < 1) return 1;
+					if (val > 8192) return 8192;
+					return val;
+				}
+			}
+		} catch (IOException | NumberFormatException e) {
+			System.err.println("Warning: could not read config (" + e.getMessage() + "); defaulting to 100 rounds.");
+		}
+		return 100;
 	}
 
 	/**
@@ -134,10 +169,19 @@ public class CatanSimulator {
 			board.distributeResources(roll);
 		}
 
-		Action action = a.chooseAction(board);
-		if (action != null) {
-			action.execute(board, a);
-			logAction(currentRound, a.getId(), action.describe());
+		// R1.8: agents with more than 7 cards MUST attempt to build
+		if (a.checkHandLimit()) {
+			Action forced = a.chooseAction(board);
+			if (forced != null) {
+				forced.execute(board, a);
+				logAction(currentRound, a.getId(), "[hand limit] " + forced.describe());
+			}
+		} else {
+			Action action = a.chooseAction(board);
+			if (action != null) {
+				action.execute(board, a);
+				logAction(currentRound, a.getId(), action.describe());
+			}
 		}
 	}
 

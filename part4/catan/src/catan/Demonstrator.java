@@ -24,21 +24,27 @@ public class Demonstrator {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// --- Full simulation (up to 100 rounds from config) ---
-		System.out.println("=== Catan Simulator: Full Run (max 100 rounds) ===");
-		CatanSimulator sim = new CatanSimulator(100);
+		// Config file path — turns: int [1-8192] read from config.txt
+		String config = "src/catan/config.txt";
+
+		// --- Full simulation: rounds loaded from config.txt ---
+		System.out.println("=== Catan Simulator: Full Run (rounds from config.txt) ===");
+		CatanSimulator sim = new CatanSimulator(config);
 		sim.runSimulation();
 
 		// --- Short 5-round demo showing key mechanics ---
+		// Temporarily write a 5-round config for the demo
 		System.out.println();
 		System.out.println("=== Catan Simulator: 5-Round Demo ===");
 		System.out.println("Key mechanics demonstrated:");
 		System.out.println("  * Setup phase: free placements, starting resource grants");
 		System.out.println("  * Dice roll -> resource distribution");
 		System.out.println("  * Actions: BuildSettlement, BuildRoad, UpgradeToCity");
+		System.out.println("  * R1.8: agents with >7 cards MUST attempt to build ([hand limit] tag)");
 		System.out.println("  * Win condition: 10 VP ends the game");
 		System.out.println();
-		CatanSimulator demo = new CatanSimulator(5);
+		// 5-round override for demo purposes (config path still provided for consistency)
+		CatanSimulator demo = new CatanSimulator(config, 5);
 		demo.runSimulation();
 	}
 }
