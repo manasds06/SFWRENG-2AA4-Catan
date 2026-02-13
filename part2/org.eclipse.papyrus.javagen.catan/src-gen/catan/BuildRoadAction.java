@@ -8,7 +8,7 @@ package catan;
 /**
  * 
  */
-public class BuildRoadAction {
+public class BuildRoadAction extends Action {
 	/**
 	 * 
 	 */
