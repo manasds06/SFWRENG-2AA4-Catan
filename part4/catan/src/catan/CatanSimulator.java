@@ -11,33 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /************************************************************/
-/**
- *
- */
 public class CatanSimulator {
-	/**
-	 *
-	 */
 	private int currentRound;
-	/**
-	 *
-	 */
 	private int maxRounds;
-	/**
-	 *
-	 */
 	private Board board;
-	/**
-	 *
-	 */
 	private Dice dice;
-	/**
-	 *
-	 */
 	private List<Agent> agents;
-	/**
-	 *
-	 */
 	private MoveValidator rules;
 
 	/** Primary constructor: reads turn count from config file. */
@@ -49,7 +28,7 @@ public class CatanSimulator {
 		this.rules = new MoveValidator();
 		this.agents = new ArrayList<>();
 		for (int i = 0; i < 4; i++) {
-			agents.add(new RandomAgent(i));
+			agents.add(new RandomAgent(i, rules));
 		}
 	}
 
@@ -62,7 +41,7 @@ public class CatanSimulator {
 		this.rules = new MoveValidator();
 		this.agents = new ArrayList<>();
 		for (int i = 0; i < 4; i++) {
-			agents.add(new RandomAgent(i));
+			agents.add(new RandomAgent(i, rules));
 		}
 	}
 

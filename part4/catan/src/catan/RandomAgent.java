@@ -16,10 +16,12 @@ public class RandomAgent extends Agent {
 	 *
 	 */
 	java.util.Random rng;
+	private MoveValidator validator;
 
-	public RandomAgent(int id) {
+	public RandomAgent(int id, MoveValidator validator) {
 		initAgent(id);
 		rng = new java.util.Random();
+		this.validator = validator;
 	}
 
 	/**
@@ -31,19 +33,19 @@ public class RandomAgent extends Agent {
 		List<Action> possible = new ArrayList<>();
 
 		for (Node n : b.getAvailableNodesForSettlement(this)) {
-			if (canAfford(Cost.SETTLEMENT)) {
+			if (validator.canPlaceSettlement(b, this, n)) {
 				possible.add(new BuildSettlementAction(n));
 			}
 		}
 
 		for (Edge e : b.getAvailableEdgesForRoad(this)) {
-			if (canAfford(Cost.ROAD)) {
+			if (validator.canPlaceRoad(b, this, e)) {
 				possible.add(new BuildRoadAction(e));
 			}
 		}
 
 		for (Node n : b.getNodes().values()) {
-			if (b.canUpgradeToCity(this, n) && canAfford(Cost.CITY)) {
+			if (validator.canUpgradeToCity(b, this, n)) {
 				possible.add(new UpgradeToCityAction(n));
 			}
 		}
