@@ -14,6 +14,7 @@ public class CatanSimulator {
 	private Dice dice;
 	private List<Agent> agents;
 	private MoveValidator rules;
+	private Random rng;
 
 	public CatanSimulator(String configPath) {
 		this.maxRounds = readTurnsFromConfig(configPath);
@@ -21,6 +22,7 @@ public class CatanSimulator {
 		this.board = new Board();
 		this.dice = new Dice();
 		this.rules = new MoveValidator();
+		this.rng = new Random();
 		this.agents = new ArrayList<>();
 		for (int i = 0; i < 4; i++) {
 			agents.add(new RandomAgent(i, rules));
@@ -69,7 +71,7 @@ public class CatanSimulator {
 	private void doSetupPlacement(Agent a, boolean grantResources) {
 		List<Node> available = board.getAvailableNodesForSetup(a);
 		if (!available.isEmpty()) {
-			Node chosen = available.get(0);
+			Node chosen = available.get(rng.nextInt(available.size()));
 			chosen.owner = a;
 			chosen.building = BuildingType.SETTLEMENT;
 			a.addVictoryPoints(1);
@@ -86,14 +88,13 @@ public class CatanSimulator {
 				}
 			}
 
-			// Place a road adjacent to the chosen settlement
-			List<Edge> roadOptions = board.getAvailableEdgesForRoad(a);
-			if (!roadOptions.isEmpty()) {
-				Edge road = null;
-				for (Edge e : roadOptions) {
-					if (e.getA() == chosen || e.getB() == chosen) { road = e; break; }
-				}
-				if (road == null) road = roadOptions.get(0);
+			// Place a road adjacent to the chosen settlement (random choice)
+			List<Edge> adjacent = new ArrayList<>();
+			for (Edge e : chosen.edges) {
+				if (e.owner == null) adjacent.add(e);
+			}
+			if (!adjacent.isEmpty()) {
+				Edge road = adjacent.get(rng.nextInt(adjacent.size()));
 				road.owner = a;
 				logAction(0, a.getId(), "Setup: placed road at edge " + road.getId());
 			}

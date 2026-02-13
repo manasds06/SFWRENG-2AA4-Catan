@@ -24,11 +24,12 @@ public class Board {
 		edges = new HashMap<>();
 
 		int nodeCount = 54;
-		List<int[]> hexDefs = new ArrayList<>(); // each entry: [id, token, n0..n5]
+		List<int[]> hexDefs = new ArrayList<>();
 		List<TerrainType> hexTerrains = new ArrayList<>();
 
 		try (BufferedReader br = new BufferedReader(new FileReader(MAP_FILE))) {
 			String line;
+			// read the map file and parse the hexes and nodes
 			while ((line = br.readLine()) != null) {
 				line = line.trim();
 				if (line.isEmpty() || line.startsWith("#")) continue;
@@ -38,11 +39,10 @@ public class Board {
 
 				} else if (line.startsWith("hex:")) {
 					String[] parts = line.substring("hex:".length()).trim().split("\\s+");
-					// parts: id terrain token n0 n1 n2 n3 n4 n5
 					int id      = Integer.parseInt(parts[0]);
 					TerrainType terrain = TerrainType.valueOf(parts[1]);
 					int token   = Integer.parseInt(parts[2]);
-					int[] def   = new int[8]; // [id, token, n0..n5]
+					int[] def   = new int[8];	
 					def[0] = id;
 					def[1] = token;
 					for (int i = 0; i < 6; i++) def[2 + i] = Integer.parseInt(parts[3 + i]);
