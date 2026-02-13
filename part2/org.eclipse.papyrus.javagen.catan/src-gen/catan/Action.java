@@ -16,6 +16,7 @@ public abstract class Action extends BuildSettlementAction {
 	 * @return 
 	 */
 	public boolean execute(Agent a, Board b) {
+		return false;
 	}
 
 	/**
@@ -23,5 +24,6 @@ public abstract class Action extends BuildSettlementAction {
 	 * @return 
 	 */
 	public String describe() {
+		return null;
 	}
 }
