@@ -21,6 +21,7 @@ public class BuildRoadAction {
 	 * @return 
 	 */
 	public boolean execute(Agent a, Board b) {
+		return false;
 	}
 
 	/**
@@ -28,5 +29,6 @@ public class BuildRoadAction {
 	 * @return 
 	 */
 	private String describe() {
+		return null;
 	}
 }

@@ -41,6 +41,7 @@ public class Board {
 	 * @return 
 	 */
 	public java.util.List<Node> getAvailableNodesForSettlement(Agent a) {
+		return null;
 	}
 
 	/**
@@ -49,6 +50,7 @@ public class Board {
 	 * @return 
 	 */
 	public java.util.List<Edge> getAvailableEdgesForRoad(Agent a) {
+		return null;
 	}
 
 	/**
@@ -58,6 +60,7 @@ public class Board {
 	 * @return 
 	 */
 	public boolean canUpgradeToCity(Agent a, Node n) {
+		return false;
 	}
 
 	/**
@@ -67,6 +70,7 @@ public class Board {
 	 * @return 
 	 */
 	public boolean placeSettlement(Agent a, Node n) {
+			return false;
 	}
 
 	/**
@@ -76,6 +80,7 @@ public class Board {
 	 * @return 
 	 */
 	public boolean placeRoad(Agent a, Node n) {
+		return false;
 	}
 
 	/**
@@ -85,5 +90,6 @@ public class Board {
 	 * @return 
 	 */
 	public boolean upgradeToCity(Agent a, Node n) {
+		return false;
 	}
 }

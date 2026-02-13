@@ -20,5 +20,6 @@ public class RandomAgent {
 	 * @return 
 	 */
 	public Action chooseAction(Board b) {
+		return null;
 	}
 }

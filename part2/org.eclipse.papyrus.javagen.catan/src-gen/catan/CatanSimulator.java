@@ -62,6 +62,7 @@ public class CatanSimulator {
 	 * @return 
 	 */
 	private boolean checkWinCondition() {
+		return false;
 	}
 
 	/**

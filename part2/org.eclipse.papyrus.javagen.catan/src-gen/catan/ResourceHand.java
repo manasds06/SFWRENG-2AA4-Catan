@@ -19,6 +19,7 @@ public class ResourceHand {
 	 * @return 
 	 */
 	public int getTotalCards() {
+		return 0;
 	}
 
 	/**
@@ -43,5 +44,6 @@ public class ResourceHand {
 	 * @return 
 	 */
 	public int get(ResourceType r) {
+		return 0;
 	}
 }

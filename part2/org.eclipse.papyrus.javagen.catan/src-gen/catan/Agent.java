@@ -27,6 +27,7 @@ public abstract class Agent extends RandomAgent {
 	 * @return 
 	 */
 	public int getId() {
+		return 0;
 	}
 
 	/**
@@ -34,6 +35,7 @@ public abstract class Agent extends RandomAgent {
 	 * @return 
 	 */
 	public int getVictoryPoints() {
+		return 0;
 	}
 
 	/**
@@ -57,6 +59,7 @@ public abstract class Agent extends RandomAgent {
 	 * @return 
 	 */
 	public boolean canAfford(Cost c) {
+		return false;
 	}
 
 	/**
@@ -71,6 +74,7 @@ public abstract class Agent extends RandomAgent {
 	 * @return 
 	 */
 	public boolean checkHandLimit() {
+		return false;
 	}
 
 	/**
@@ -79,5 +83,6 @@ public abstract class Agent extends RandomAgent {
 	 * @return 
 	 */
 	public Action chooseAction(Board b) {
+		return null;
 	}
 }

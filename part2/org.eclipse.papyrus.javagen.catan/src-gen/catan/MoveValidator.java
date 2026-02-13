@@ -17,6 +17,7 @@ public class MoveValidator {
 	 * @return 
 	 */
 	public boolean canPlaceSettlement(Board b, Agent a, Node n) {
+		return false;
 	}
 
 	/**
@@ -27,6 +28,7 @@ public class MoveValidator {
 	 * @return 
 	 */
 	public boolean canPlaceRoad(Board b, Agent a, Edge e) {
+		return false;
 	}
 
 	/**
@@ -37,5 +39,6 @@ public class MoveValidator {
 	 * @return 
 	 */
 	public boolean canUpgradeToCity(Board b, Agent a, Node n) {
+		return false;
 	}
 }
