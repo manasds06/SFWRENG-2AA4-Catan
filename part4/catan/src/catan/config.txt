@@ -1,3 +1,1 @@
-turns: 100
-
-# Maximum number of turns is 8192
+turns: 1000
