@@ -1,12 +1,12 @@
 package catan;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 public class Dice {
 	private Random rng;
 
 	public Dice() {
-		rng = new Random();
+		rng = new SecureRandom();
 	}
 
 	public int roll() {
