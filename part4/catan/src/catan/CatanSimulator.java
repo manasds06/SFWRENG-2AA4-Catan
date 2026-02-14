@@ -115,8 +115,9 @@ public class CatanSimulator {
 	private void runTurn(Agent a) {
 		int roll = dice.roll();
 		if (roll == 7) {
-			System.out.printf("[%d] / [%d]: Rolled 7 -- no resources produced%n", currentRound, a.getId());
+			logAction(currentRound, a.getId(), "Rolled " + roll + " -- no resources produced");
 		} else {
+			logAction(currentRound, a.getId(), "Rolled " + roll);
 			board.distributeResources(roll);
 		}
 
