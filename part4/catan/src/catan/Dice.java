@@ -3,7 +3,7 @@ package catan;
 import java.security.SecureRandom;
 
 public class Dice {
-	private Random rng;
+	private SecureRandom rng;
 
 	public Dice() {
 		rng = new SecureRandom();
