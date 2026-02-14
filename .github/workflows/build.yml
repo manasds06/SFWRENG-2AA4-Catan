@@ -23,7 +23,7 @@ jobs:
       - name: Compile Java Code
         run: |
           mkdir -p out
-          find . -name "*.java" > sources.txt
+          find part4 -name "*.java" > sources.txt
           javac -d out @sources.txt
 
       - name: SonarQube Scan
