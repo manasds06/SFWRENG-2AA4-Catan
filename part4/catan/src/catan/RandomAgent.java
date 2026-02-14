@@ -2,15 +2,15 @@ package catan;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.security.SecureRandom;
 
 public class RandomAgent extends Agent {
-	private Random rng;
+	private SecureRandom rng;
 	private MoveValidator validator;
 
 	public RandomAgent(int id, MoveValidator validator) {
 		initAgent(id);
-		this.rng = new Random();
+		this.rng = new SecureRandom();
 		this.validator = validator;
 	}
 
