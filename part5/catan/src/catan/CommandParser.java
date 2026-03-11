@@ -1,23 +1,7 @@
 package catan;
 
-/**
- * Translates raw console input from the human player into an {@link Action}.
- *
- * Supported commands (case-insensitive):
- *   roll                              – roll the dice
- *   go                                – end your turn
- *   list                              – show hand and board summary
- *   build settlement <nodeId>         – place a settlement
- *   build city       <nodeId>         – upgrade a settlement to city
- *   build road       <fromId> <toId>  – place a road between two nodes
- */
 public class CommandParser {
 
-	/**
-	 * @param input raw console input string
-	 * @param board current game board (used to resolve node/edge IDs)
-	 * @return the matching Action, or null if the command could not be parsed
-	 */
 	public Action parse(String input, Board board) {
 		if (input == null || input.isBlank()) return null;
 

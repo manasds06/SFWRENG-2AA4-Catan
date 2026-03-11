@@ -16,11 +16,7 @@ public class Robber {
 		return currentHex;
 	}
 
-	/**
-	 * Moves the robber to a random hex that is:
-	 *  - not the hex it currently occupies
-	 *  - not a DESERT hex (per simplified rulebook)
-	 */
+	// Excludes current hex and DESERT (per simplified rulebook)
 	public void moveRandomly(Board b) {
 		List<Hex> candidates = new ArrayList<>();
 		for (Hex h : b.getHexes().values()) {
@@ -33,10 +29,7 @@ public class Robber {
 		currentHex = candidates.get(rng.nextInt(candidates.size()));
 	}
 
-	/**
-	 * Per R2.5: any agent holding more than 7 cards must discard half
-	 * (rounded down) chosen at random.
-	 */
+	// Agents with >7 cards discard half (floor)
 	public void applyPenalty(List<Agent> agents) {
 		for (Agent a : agents) {
 			int total = a.getHandTotal();
@@ -49,14 +42,9 @@ public class Robber {
 		}
 	}
 
-	/**
-	 * Takes one random resource card from the victim and gives it to the thief.
-	 * Does nothing if the victim has no cards.
-	 */
 	public void stealResource(Agent thief, Agent victim) {
 		ResourceType stolen = victim.removeRandomResource();
-		if (stolen != null) {
-			thief.addResource(stolen, 1);
-		}
+		if (stolen != null) thief.addResource(stolen, 1);
 	}
 }
+

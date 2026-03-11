@@ -18,7 +18,6 @@ public class CatanSimulator implements Subject {
 	private TurnState currentState;
 	private List<Observer> observers;
 
-	/** Constructs an automated simulation with 4 RandomAgents. */
 	public CatanSimulator(String configPath) {
 		this(configPath, false);
 	}
@@ -39,13 +38,9 @@ public class CatanSimulator implements Subject {
 		this.agents = new ArrayList<>();
 		this.observers = new ArrayList<>();
 
-		// Create agents: bots for seats 0-2, human or bot for seat 3
-		for (int i = 0; i < 3; i++) {
-			agents.add(new RandomAgent(i, rules));
-		}
+		for (int i = 0; i < 3; i++) agents.add(new RandomAgent(i, rules));
 		if (humanMode) {
 			agents.add(new HumanAgent(3));
-			// Step-forward: start in WaitForGoState so the player controls pacing
 			this.currentState = new WaitForGoState();
 		} else {
 			agents.add(new RandomAgent(3, rules));
@@ -74,19 +69,12 @@ public class CatanSimulator implements Subject {
 	public void runSimulation() {
 		board.setupMap();
 
-		// Setup phase: each agent places 2 settlements and 2 roads
-		for (Agent a : agents) {
-			doSetupPlacement(a, false);
-		}
-		for (int i = agents.size() - 1; i >= 0; i--) {
-			doSetupPlacement(agents.get(i), true);
-		}
+		// Snake-draft setup: forward then reverse order
+		for (Agent a : agents) doSetupPlacement(a, false);
+		for (int i = agents.size() - 1; i >= 0; i--) doSetupPlacement(agents.get(i), true);
 
-		// Main game loop
 		for (currentRound = 1; currentRound <= maxRounds; currentRound++) {
-			for (Agent a : agents) {
-				runTurn(a);
-			}
+			for (Agent a : agents) runTurn(a);
 			printRoundSummary();
 			if (checkWinCondition()) break;
 		}
@@ -101,8 +89,8 @@ public class CatanSimulator implements Subject {
 			a.addVictoryPoints(1);
 			logAction(0, a.getId(), "Setup: placed settlement at node " + chosen.getId());
 
-			// Second settlement grants one resource from each adjacent hex
 			if (grantResources) {
+				// Second settlement yields one resource per adjacent non-desert hex
 				for (Hex hex : board.getHexes().values()) {
 					if (hex.terrain == TerrainType.DESERT) continue;
 					if (hex.getCorners().contains(chosen)) {
@@ -112,7 +100,6 @@ public class CatanSimulator implements Subject {
 				}
 			}
 
-			// Place a road adjacent to the chosen settlement (random choice)
 			List<Edge> adjacent = new ArrayList<>();
 			for (Edge e : chosen.edges) {
 				if (e.owner == null) adjacent.add(e);
@@ -136,12 +123,7 @@ public class CatanSimulator implements Subject {
 		}
 	}
 
-	/**
-	 * Delegates the current agent's turn entirely to the active TurnState.
-	 * RollingPhase → (7?) RobberPhase → ActionPhase → RollingPhase (next turn).
-	 */
 	private void runTurn(Agent a) {
-		// The state machine begins each turn in RollingPhase and chains the rest
 		currentState.handleTurn(this, a);
 	}
 
@@ -167,46 +149,25 @@ public class CatanSimulator implements Subject {
 		System.out.printf("[%d] / [%d]: %s%n", round, playerId, action);
 	}
 
-	// ── Subject (Observer pattern) ────────────────────────────────
+	// ── Subject ────────────────────────────────────────────────────
 
-	@Override
-	public void attach(Observer o) {
-		observers.add(o);
-	}
+	@Override public void attach(Observer o)   { observers.add(o); }
+	@Override public void detach(Observer o)   { observers.remove(o); }
+	@Override public void notifyObservers()    { for (Observer o : observers) o.update(board, agents); }
 
-	@Override
-	public void detach(Observer o) {
-		observers.remove(o);
-	}
+	// ── State ──────────────────────────────────────────────────────
 
-	@Override
-	public void notifyObservers() {
-		for (Observer o : observers) {
-			o.update(board, agents);
-		}
-	}
+	public void setState(TurnState s)  { this.currentState = s; }
+	public TurnState getState()        { return currentState; }
 
-	// ── State machine (TurnState pattern) ────────────────────────
-
-	public void setState(TurnState s) {
-		this.currentState = s;
-	}
-
-	public TurnState getState() {
-		return currentState;
-	}
-
-	/** Advance one step in stepwise / human-driven mode. */
 	public void stepForward() {
-		if (!agents.isEmpty()) {
-			currentState.handleTurn(this, agents.get(currentRound % agents.size()));
-		}
+		if (!agents.isEmpty()) currentState.handleTurn(this, agents.get(currentRound % agents.size()));
 	}
 
-	// ── Accessors for TurnState implementations ───────────────────
+	// ── Accessors ──────────────────────────────────────────────────
 
-	public Board getBoard() { return board; }
-	public Dice getDice()   { return dice; }
-	public List<Agent> getAgents() { return agents; }
-	public int getCurrentRound()   { return currentRound; }
+	public Board getBoard()          { return board; }
+	public Dice getDice()            { return dice; }
+	public List<Agent> getAgents()   { return agents; }
+	public int getCurrentRound()     { return currentRound; }
 }

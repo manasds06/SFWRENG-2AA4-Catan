@@ -4,12 +4,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Observer that serialises the current game state to a JSON file after every turn.
- * The output feeds the instructor-provided visualizer (R2.2 / R2.3).
- *
- * No external JSON library is used; the file is built with a StringBuilder.
- */
 public class JSONStateExporter implements Observer {
 
 	private String outputFilePath;
@@ -23,22 +17,10 @@ public class JSONStateExporter implements Observer {
 		writeToJson(b, agents);
 	}
 
-	/**
-	 * Writes game state to {@code outputFilePath}, overwriting any previous content.
-	 * Format:
-	 * <pre>
-	 * {
-	 *   "agents": [ { "id":0, "victoryPoints":2, "hand":{"WOOD":1,...} }, ... ],
-	 *   "hexes":  [ { "id":0, "terrain":"WOOD", "token":6, "robber":false }, ... ],
-	 *   "robberHex": 18
-	 * }
-	 * </pre>
-	 */
 	private void writeToJson(Board b, List<Agent> agents) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{\n");
 
-		// ── agents ──────────────────────────────────────────────────────────
 		sb.append("  \"agents\": [\n");
 		for (int i = 0; i < agents.size(); i++) {
 			Agent a = agents.get(i);
@@ -58,7 +40,6 @@ public class JSONStateExporter implements Observer {
 		}
 		sb.append("  ],\n");
 
-		// ── hexes ────────────────────────────────────────────────────────────
 		Robber robber = b.getRobber();
 		int robberHexId = (robber != null) ? robber.getCurrentHex().getId() : -1;
 
@@ -77,16 +58,15 @@ public class JSONStateExporter implements Observer {
 		}
 		sb.append("  ],\n");
 
-		// ── robberHex ────────────────────────────────────────────────────────
 		sb.append("  \"robberHex\": ").append(robberHexId).append("\n");
 		sb.append("}\n");
 
-		// Write to file
 		try (FileWriter fw = new FileWriter(outputFilePath)) {
 			fw.write(sb.toString());
 		} catch (IOException e) {
-			System.err.println("JSONStateExporter: failed to write to " + outputFilePath + " — " + e.getMessage());
+			System.err.println("JSONStateExporter: failed to write " + outputFilePath + " — " + e.getMessage());
 		}
 	}
 }
+
 

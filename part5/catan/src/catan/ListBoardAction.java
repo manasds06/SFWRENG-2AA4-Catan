@@ -1,9 +1,5 @@
 package catan;
 
-/**
- * Prints a human-readable snapshot of the board and the acting agent's hand.
- * Triggered by the "list" command (R2.1).
- */
 public class ListBoardAction extends Action {
 
 	@Override
@@ -27,4 +23,5 @@ public class ListBoardAction extends Action {
 		return "Listed board and hand";
 	}
 }
+
 
