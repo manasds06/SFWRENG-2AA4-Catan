@@ -48,4 +48,27 @@ public class ResourceHandTest {
         hand.add(ResourceType.ORE, 1);
         assertEquals(6, hand.getTotalCards(), "Total cards should be 2+3+1 = 6");
     }
+
+    /**
+     * Boundary test: every individual resource type should be 0 on a fresh hand.
+     */
+    // BOUNDARY TESTING
+    @Test
+    void testEachResourceStartsAtZero() {
+        for (ResourceType r : ResourceType.values()) {
+            assertEquals(0, hand.get(r), r + " should be 0 in a new hand");
+        }
+    }
+
+    /**
+     * Partition test: removing resources should decrease get() and getTotalCards().
+     */
+    // PARTITION TESTING
+    @Test
+    void testRemoveResources() {
+        hand.add(ResourceType.WHEAT, 5);
+        hand.remove(ResourceType.WHEAT, 3);
+        assertEquals(2, hand.get(ResourceType.WHEAT), "After adding 5 and removing 3 WHEAT, should have 2");
+        assertEquals(2, hand.getTotalCards(), "Total cards should be 2 after removal");
+    }
 }
