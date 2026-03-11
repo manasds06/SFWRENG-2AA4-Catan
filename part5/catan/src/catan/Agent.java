@@ -65,6 +65,11 @@ public abstract class Agent {
 		return hand.getTotalCards();
 	}
 
+	/** Returns the count of a specific resource in this agent's hand. */
+	public int getHandCount(ResourceType r) {
+		return hand.get(r);
+	}
+
 	/** Returns a human-readable summary of the agent's resource hand. */
 	public String getHandSummary() {
 		StringBuilder sb = new StringBuilder();
