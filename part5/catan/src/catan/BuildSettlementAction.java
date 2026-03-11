@@ -8,6 +8,7 @@ public class BuildSettlementAction extends Action {
 	}
 
 	public boolean execute(Board b, Agent a) {
+		if (!a.canAfford(Cost.SETTLEMENT)) return false;
 		a.pay(Cost.SETTLEMENT);
 		return b.placeSettlement(a, target);
 	}
@@ -16,3 +17,4 @@ public class BuildSettlementAction extends Action {
 		return "Built settlement at node " + target.getId();
 	}
 }
+

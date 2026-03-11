@@ -2,23 +2,23 @@
   "agents": [
     {
       "id": 0,
-      "victoryPoints": 4,
-      "hand": {"WOOD": 2, "BRICK": 0, "SHEEP": 5, "WHEAT": 9, "ORE": 2}
+      "victoryPoints": 10,
+      "hand": {"WOOD": 2, "BRICK": 2, "SHEEP": 1, "WHEAT": 14, "ORE": 4}
     },
     {
       "id": 1,
       "victoryPoints": 2,
-      "hand": {"WOOD": 4, "BRICK": 0, "SHEEP": 0, "WHEAT": 6, "ORE": 0}
+      "hand": {"WOOD": 3, "BRICK": 0, "SHEEP": 3, "WHEAT": 1, "ORE": 0}
     },
     {
       "id": 2,
-      "victoryPoints": 4,
-      "hand": {"WOOD": 3, "BRICK": 0, "SHEEP": 2, "WHEAT": 1, "ORE": 2}
+      "victoryPoints": 5,
+      "hand": {"WOOD": 2, "BRICK": 0, "SHEEP": 0, "WHEAT": 0, "ORE": 5}
     },
     {
       "id": 3,
-      "victoryPoints": 4,
-      "hand": {"WOOD": 11, "BRICK": 0, "SHEEP": 0, "WHEAT": 1, "ORE": 10}
+      "victoryPoints": 2,
+      "hand": {"WOOD": 1, "BRICK": 0, "SHEEP": 0, "WHEAT": 4, "ORE": 0}
     }
   ],
   "hexes": [
@@ -33,14 +33,14 @@
     { "id": 8, "terrain": "BRICK", "token": 11, "robber": false },
     { "id": 9, "terrain": "ORE", "token": 4, "robber": false },
     { "id": 10, "terrain": "WHEAT", "token": 8, "robber": false },
-    { "id": 11, "terrain": "WOOD", "token": 8, "robber": true },
+    { "id": 11, "terrain": "WOOD", "token": 8, "robber": false },
     { "id": 12, "terrain": "SHEEP", "token": 9, "robber": false },
     { "id": 13, "terrain": "BRICK", "token": 5, "robber": false },
     { "id": 14, "terrain": "WOOD", "token": 6, "robber": false },
     { "id": 15, "terrain": "ORE", "token": 3, "robber": false },
     { "id": 16, "terrain": "SHEEP", "token": 10, "robber": false },
-    { "id": 17, "terrain": "WHEAT", "token": 2, "robber": false },
+    { "id": 17, "terrain": "WHEAT", "token": 2, "robber": true },
     { "id": 18, "terrain": "DESERT", "token": 0, "robber": false }
   ],
-  "robberHex": 11
+  "robberHex": 17
 }

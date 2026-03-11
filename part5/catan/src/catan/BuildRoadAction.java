@@ -8,6 +8,7 @@ public class BuildRoadAction extends Action {
 	}
 
 	public boolean execute(Board b, Agent a) {
+		if (!a.canAfford(Cost.ROAD)) return false;
 		a.pay(Cost.ROAD);
 		return b.placeRoad(a, target);
 	}
@@ -16,3 +17,4 @@ public class BuildRoadAction extends Action {
 		return "Built road at edge " + target.getId();
 	}
 }
+

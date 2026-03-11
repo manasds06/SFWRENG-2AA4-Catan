@@ -38,9 +38,12 @@ public class CatanSimulator implements Subject {
 		this.agents = new ArrayList<>();
 		this.observers = new ArrayList<>();
 
-		for (int i = 0; i < 3; i++) agents.add(new RandomAgent(i, rules));
+		// Create agents: bots for seats 0-2, human or bot for seat 3
+		for (int i = 0; i < 3; i++) {
+			agents.add(new RandomAgent(i, rules));
+		}
 		if (humanMode) {
-			agents.add(new HumanAgent(3));
+			agents.add(new HumanAgent(3, this));
 			this.currentState = new WaitForGoState();
 		} else {
 			agents.add(new RandomAgent(3, rules));
@@ -69,12 +72,19 @@ public class CatanSimulator implements Subject {
 	public void runSimulation() {
 		board.setupMap();
 
-		// Snake-draft setup: forward then reverse order
-		for (Agent a : agents) doSetupPlacement(a, false);
-		for (int i = agents.size() - 1; i >= 0; i--) doSetupPlacement(agents.get(i), true);
+		// Setup phase: each agent places 2 settlements and 2 roads
+		for (Agent a : agents) {
+			doSetupPlacement(a, false);
+		}
+		for (int i = agents.size() - 1; i >= 0; i--) {
+			doSetupPlacement(agents.get(i), true);
+		}
 
+		// Main game loop
 		for (currentRound = 1; currentRound <= maxRounds; currentRound++) {
-			for (Agent a : agents) runTurn(a);
+			for (Agent a : agents) {
+				runTurn(a);
+			}
 			printRoundSummary();
 			if (checkWinCondition()) break;
 		}
@@ -127,7 +137,7 @@ public class CatanSimulator implements Subject {
 		currentState.handleTurn(this, a);
 	}
 
-	public boolean checkWinCondition() {
+	private boolean checkWinCondition() {
 		for (Agent a : agents) {
 			if (a.getVictoryPoints() >= 10) {
 				System.out.println("Player " + a.getId() + " wins with " + a.getVictoryPoints() + " VP!");

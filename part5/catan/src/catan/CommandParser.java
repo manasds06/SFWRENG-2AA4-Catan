@@ -2,25 +2,24 @@ package catan;
 
 public class CommandParser {
 
-	public Action parse(String input, Board board) {
+	private Board board;
+	private CatanSimulator context;
+
+	// Set by HumanAgent before each parse call
+	public void setBoard(Board board) { this.board = board; }
+	public void setContext(CatanSimulator context) { this.context = context; }
+
+	public Action parse(String input) {
 		if (input == null || input.isBlank()) return null;
 
 		String[] tokens = input.trim().split("\\s+");
 		String cmd = tokens[0].toLowerCase();
 
 		switch (cmd) {
-			case "roll":
-				return new RollDiceAction();
-
-			case "go":
-				return new EndTurnAction();
-
-			case "list":
-				return new ListBoardAction();
-
-			case "build":
-				return parseBuild(tokens, board);
-
+			case "roll":  return new RollDiceAction(context);
+			case "go":    return new EndTurnAction();
+			case "list":  return new ListBoardAction();
+			case "build": return parseBuild(tokens);
 			default:
 				System.out.println("Unknown command: \"" + input + "\"");
 				System.out.println("Commands: roll | go | list | build settlement <id> | build city <id> | build road <id1> <id2>");
@@ -28,7 +27,7 @@ public class CommandParser {
 		}
 	}
 
-	private Action parseBuild(String[] tokens, Board board) {
+	private Action parseBuild(String[] tokens) {
 		if (tokens.length < 3) {
 			System.out.println("Usage: build [settlement|city|road] <id> [<id2>]");
 			return null;
@@ -51,25 +50,19 @@ public class CommandParser {
 					return new UpgradeToCityAction(n);
 				}
 				case "road": {
-					if (tokens.length < 4) {
-						System.out.println("Usage: build road <fromNodeId> <toNodeId>");
-						return null;
-					}
+					if (tokens.length < 4) { System.out.println("Usage: build road <fromNodeId> <toNodeId>"); return null; }
 					int fromId = Integer.parseInt(tokens[2]);
 					int toId   = Integer.parseInt(tokens[3]);
-					// Find the edge whose endpoints match these two node IDs
+					// Find edge by matching both endpoint node IDs
 					for (Edge e : board.getEdges().values()) {
-						int a = e.getA().getId();
-						int b = e.getB().getId();
-						if ((a == fromId && b == toId) || (a == toId && b == fromId)) {
-							return new BuildRoadAction(e);
-						}
+						int a = e.getA().getId(), b = e.getB().getId();
+						if ((a == fromId && b == toId) || (a == toId && b == fromId)) return new BuildRoadAction(e);
 					}
-					System.out.println("No edge found between node " + fromId + " and node " + toId);
+					System.out.println("No edge between node " + fromId + " and node " + toId);
 					return null;
 				}
 				default:
-					System.out.println("Unknown build type: \"" + type + "\"  (settlement | city | road)");
+					System.out.println("Unknown build type: \"" + type + "\" (settlement | city | road)");
 					return null;
 			}
 		} catch (NumberFormatException e) {
@@ -78,4 +71,3 @@ public class CommandParser {
 		}
 	}
 }
-
