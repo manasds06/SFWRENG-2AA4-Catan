@@ -5,7 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.security.SecureRandom;
 
 public class CatanSimulator implements Subject {
 	private int currentRound;
@@ -14,22 +14,42 @@ public class CatanSimulator implements Subject {
 	private Dice dice;
 	private List<Agent> agents;
 	private MoveValidator rules;
-	private Random rng;
+	private SecureRandom rng;
 	private TurnState currentState;
 	private List<Observer> observers;
 
+	/** Constructs an automated simulation with 4 RandomAgents. */
 	public CatanSimulator(String configPath) {
+		this(configPath, false);
+	}
+
+	/**
+	 * Constructs the simulator.
+	 * @param configPath path to config.txt
+	 * @param humanMode  when true, Player 3 becomes a HumanAgent and step-forward
+	 *                   (WaitForGoState) is active between every turn (R2.4)
+	 */
+	public CatanSimulator(String configPath, boolean humanMode) {
 		this.maxRounds = readTurnsFromConfig(configPath);
 		this.currentRound = 0;
 		this.board = new Board();
 		this.dice = new Dice();
 		this.rules = new MoveValidator();
-		this.rng = new Random();
+		this.rng = new SecureRandom();
 		this.agents = new ArrayList<>();
-		this.currentState = new RollingPhase();
 		this.observers = new ArrayList<>();
-		for (int i = 0; i < 4; i++) {
+
+		// Create agents: bots for seats 0-2, human or bot for seat 3
+		for (int i = 0; i < 3; i++) {
 			agents.add(new RandomAgent(i, rules));
+		}
+		if (humanMode) {
+			agents.add(new HumanAgent(3));
+			// Step-forward: start in WaitForGoState so the player controls pacing
+			this.currentState = new WaitForGoState();
+		} else {
+			agents.add(new RandomAgent(3, rules));
+			this.currentState = new RollingPhase();
 		}
 	}
 
@@ -116,32 +136,16 @@ public class CatanSimulator implements Subject {
 		}
 	}
 
+	/**
+	 * Delegates the current agent's turn entirely to the active TurnState.
+	 * RollingPhase → (7?) RobberPhase → ActionPhase → RollingPhase (next turn).
+	 */
 	private void runTurn(Agent a) {
-		int roll = dice.roll2d6();
-		if (roll == 7) {
-			logAction(currentRound, a.getId(), "Rolled " + roll + " -- no resources produced");
-		} else {
-			logAction(currentRound, a.getId(), "Rolled " + roll);
-			board.distributeResources(roll);
-		}
-
-		// agents with more than 7 cards attempts to build
-		if (a.checkHandLimit()) {
-			Action forced = a.chooseAction(board);
-			if (forced != null) {
-				forced.execute(board, a);
-				logAction(currentRound, a.getId(), "[hand limit] " + forced.describe());
-			}
-		} else {
-			Action action = a.chooseAction(board);
-			if (action != null) {
-				action.execute(board, a);
-				logAction(currentRound, a.getId(), action.describe());
-			}
-		}
+		// The state machine begins each turn in RollingPhase and chains the rest
+		currentState.handleTurn(this, a);
 	}
 
-	private boolean checkWinCondition() {
+	public boolean checkWinCondition() {
 		for (Agent a : agents) {
 			if (a.getVictoryPoints() >= 10) {
 				System.out.println("Player " + a.getId() + " wins with " + a.getVictoryPoints() + " VP!");
@@ -159,7 +163,7 @@ public class CatanSimulator implements Subject {
 		System.out.println();
 	}
 
-	private void logAction(int round, int playerId, String action) {
+	public void logAction(int round, int playerId, String action) {
 		System.out.printf("[%d] / [%d]: %s%n", round, playerId, action);
 	}
 
