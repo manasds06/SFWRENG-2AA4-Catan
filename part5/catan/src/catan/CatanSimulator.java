@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class CatanSimulator {
+public class CatanSimulator implements Subject {
 	private int currentRound;
 	private int maxRounds;
 	private Board board;
@@ -15,6 +15,8 @@ public class CatanSimulator {
 	private List<Agent> agents;
 	private MoveValidator rules;
 	private Random rng;
+	private TurnState currentState;
+	private List<Observer> observers;
 
 	public CatanSimulator(String configPath) {
 		this.maxRounds = readTurnsFromConfig(configPath);
@@ -24,6 +26,8 @@ public class CatanSimulator {
 		this.rules = new MoveValidator();
 		this.rng = new Random();
 		this.agents = new ArrayList<>();
+		this.currentState = new RollingPhase();
+		this.observers = new ArrayList<>();
 		for (int i = 0; i < 4; i++) {
 			agents.add(new RandomAgent(i, rules));
 		}
@@ -113,7 +117,7 @@ public class CatanSimulator {
 	}
 
 	private void runTurn(Agent a) {
-		int roll = dice.roll();
+		int roll = dice.roll2d6();
 		if (roll == 7) {
 			logAction(currentRound, a.getId(), "Rolled " + roll + " -- no resources produced");
 		} else {
@@ -158,4 +162,47 @@ public class CatanSimulator {
 	private void logAction(int round, int playerId, String action) {
 		System.out.printf("[%d] / [%d]: %s%n", round, playerId, action);
 	}
+
+	// ── Subject (Observer pattern) ────────────────────────────────
+
+	@Override
+	public void attach(Observer o) {
+		observers.add(o);
+	}
+
+	@Override
+	public void detach(Observer o) {
+		observers.remove(o);
+	}
+
+	@Override
+	public void notifyObservers() {
+		for (Observer o : observers) {
+			o.update(board, agents);
+		}
+	}
+
+	// ── State machine (TurnState pattern) ────────────────────────
+
+	public void setState(TurnState s) {
+		this.currentState = s;
+	}
+
+	public TurnState getState() {
+		return currentState;
+	}
+
+	/** Advance one step in stepwise / human-driven mode. */
+	public void stepForward() {
+		if (!agents.isEmpty()) {
+			currentState.handleTurn(this, agents.get(currentRound % agents.size()));
+		}
+	}
+
+	// ── Accessors for TurnState implementations ───────────────────
+
+	public Board getBoard() { return board; }
+	public Dice getDice()   { return dice; }
+	public List<Agent> getAgents() { return agents; }
+	public int getCurrentRound()   { return currentRound; }
 }

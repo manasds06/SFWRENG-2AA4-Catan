@@ -14,6 +14,7 @@ public class Board {
 	private Map<Integer, Hex> hexes;
 	private Map<Integer, Node> nodes;
 	private Map<Integer, Edge> edges;
+	private Robber robber;
 
 	// Map layout is defined in map.txt — edit that file to change the board
 	private static final String MAP_FILE = "src/catan/map.txt";
@@ -22,6 +23,7 @@ public class Board {
 		hexes = new HashMap<>();
 		nodes = new HashMap<>();
 		edges = new HashMap<>();
+		robber = null; // will be set after hexes are initialized
 
 		int nodeCount = 54;
 		List<int[]> hexDefs = new ArrayList<>();
@@ -93,6 +95,14 @@ public class Board {
 			edges.put(i, e);
 			na.edges.add(e);
 			nb.edges.add(e);
+		}
+
+		// Place the Robber on the Desert hex to start the game
+		for (Hex h : hexes.values()) {
+			if (h.getTerrain() == TerrainType.DESERT) {
+				robber = new Robber(h);
+				break;
+			}
 		}
 	}
 
@@ -203,4 +213,5 @@ public class Board {
 	public Map<Integer, Hex> getHexes() { return hexes; }
 	public Map<Integer, Node> getNodes() { return nodes; }
 	public Map<Integer, Edge> getEdges() { return edges; }
+	public Robber getRobber() { return robber; }
 }

@@ -1,5 +1,9 @@
 package catan;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.security.SecureRandom;
+
 public abstract class Agent {
 	private int id;
 	private ResourceHand hand;
@@ -23,6 +27,22 @@ public abstract class Agent {
 		hand.add(r, amount);
 	}
 
+	public void removeResource(ResourceType r, int amount) {
+		hand.remove(r, amount);
+	}
+
+	public ResourceType removeRandomResource() {
+		List<ResourceType> available = new ArrayList<>();
+		for (ResourceType r : ResourceType.values()) {
+			if (hand.get(r) > 0) available.add(r);
+		}
+		if (available.isEmpty()) return null;
+		SecureRandom rng = new SecureRandom();
+		ResourceType chosen = available.get(rng.nextInt(available.size()));
+		hand.remove(chosen, 1);
+		return chosen;
+	}
+
 	public boolean canAfford(Cost c) {
 		for (java.util.Map.Entry<ResourceType, Integer> entry : c.getRequired().entrySet()) {
 			if (hand.get(entry.getKey()) < entry.getValue()) return false;
@@ -38,6 +58,22 @@ public abstract class Agent {
 
 	public boolean checkHandLimit() {
 		return hand.getTotalCards() > 7;
+	}
+
+	/** Returns the total number of resource cards in this agent's hand. */
+	public int getHandTotal() {
+		return hand.getTotalCards();
+	}
+
+	/** Returns a human-readable summary of the agent's resource hand. */
+	public String getHandSummary() {
+		StringBuilder sb = new StringBuilder();
+		for (ResourceType r : ResourceType.values()) {
+			if (sb.length() > 0) sb.append(" ");
+			sb.append(r).append(":").append(hand.get(r));
+		}
+		sb.append(" (total: ").append(hand.getTotalCards()).append(")");
+		return sb.toString();
 	}
 
 	protected void initAgent(int id) {
