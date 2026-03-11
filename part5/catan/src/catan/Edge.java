@@ -1,0 +1,20 @@
+package catan;
+
+public class Edge {
+	private int id;
+	Agent owner;
+	Node a;
+	Node b;
+
+	public Edge(int id, Node a, Node b) {
+		this.id = id;
+		this.a = a;
+		this.b = b;
+		this.owner = null;
+	}
+
+	public int getId() { return id; }
+	public Agent getOwner() { return owner; }
+	public Node getA() { return a; }
+	public Node getB() { return b; }
+}
