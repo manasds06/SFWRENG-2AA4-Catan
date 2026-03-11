@@ -12,4 +12,6 @@ public class Dice {
 	public int roll2d6() {
 		return rng.nextInt(6) + 1 + rng.nextInt(6) + 1;
 	}
+
+	public int roll() { return roll2d6(); }
 }
