@@ -20,12 +20,20 @@ public class CommandParser {
 	public void setContext(CatanSimulator context) { this.context = context; }
 
 	public Action parse(String input) {
-		if (input == null || input.isBlank()) return null;
+		if (input == null || input.isBlank()) {
+			return null;
+		}
 		String s = input.trim();
 
-		if (P_ROLL.matcher(s).matches()) return new RollDiceAction(context);
-		if (P_GO.matcher(s).matches())   return new EndTurnAction();
-		if (P_LIST.matcher(s).matches()) return new ListBoardAction();
+		if (P_ROLL.matcher(s).matches()) {
+			return new RollDiceAction(context);
+		}
+		if (P_GO.matcher(s).matches()) {
+			return new EndTurnAction();
+		}
+		if (P_LIST.matcher(s).matches()) {
+			return new ListBoardAction();
+		}
 
 		Matcher m;
 
@@ -33,7 +41,10 @@ public class CommandParser {
 		if (m.matches()) {
 			int nodeId = Integer.parseInt(m.group(1));
 			Node n = board.getNodes().get(nodeId);
-			if (n == null) { System.out.println("Invalid node ID: " + nodeId); return null; }
+			if (n == null) {
+				System.out.println("Invalid node ID: " + nodeId);
+				return null;
+			}
 			return new BuildSettlementAction(n);
 		}
 
@@ -41,7 +52,10 @@ public class CommandParser {
 		if (m.matches()) {
 			int nodeId = Integer.parseInt(m.group(1));
 			Node n = board.getNodes().get(nodeId);
-			if (n == null) { System.out.println("Invalid node ID: " + nodeId); return null; }
+			if (n == null) {
+				System.out.println("Invalid node ID: " + nodeId);
+				return null;
+			}
 			return new UpgradeToCityAction(n);
 		}
 
@@ -52,7 +66,9 @@ public class CommandParser {
 			// Find edge whose endpoints match the two node IDs (either order)
 			for (Edge e : board.getEdges().values()) {
 				int a = e.getA().getId(), b = e.getB().getId();
-				if ((a == fromId && b == toId) || (a == toId && b == fromId)) return new BuildRoadAction(e);
+				if ((a == fromId && b == toId) || (a == toId && b == fromId)) {
+					return new BuildRoadAction(e);
+				}
 			}
 			System.out.println("No edge between node " + fromId + " and node " + toId);
 			return null;

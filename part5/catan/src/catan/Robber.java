@@ -20,11 +20,17 @@ public class Robber {
 	public void moveRandomly(Board b) {
 		List<Hex> candidates = new ArrayList<>();
 		for (Hex h : b.getHexes().values()) {
-			if (h == currentHex) continue;
-			if (h.getTerrain() == TerrainType.DESERT) continue;
+			if (h == currentHex) {
+				continue;
+			}
+			if (h.getTerrain() == TerrainType.DESERT) {
+				continue;
+			}
 			candidates.add(h);
 		}
-		if (candidates.isEmpty()) return;
+		if (candidates.isEmpty()) {
+			return;
+		}
 		SecureRandom rng = new SecureRandom();
 		currentHex = candidates.get(rng.nextInt(candidates.size()));
 	}
