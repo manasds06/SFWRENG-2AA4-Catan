@@ -3,22 +3,22 @@
     {
       "id": 0,
       "victoryPoints": 2,
-      "hand": {"WOOD": 0, "BRICK": 2, "SHEEP": 0, "WHEAT": 0, "ORE": 1}
+      "hand": { "WOOD": 0, "BRICK": 2, "SHEEP": 0, "WHEAT": 0, "ORE": 1 }
     },
     {
       "id": 1,
       "victoryPoints": 2,
-      "hand": {"WOOD": 0, "BRICK": 0, "SHEEP": 0, "WHEAT": 0, "ORE": 0}
+      "hand": { "WOOD": 0, "BRICK": 0, "SHEEP": 0, "WHEAT": 0, "ORE": 0 }
     },
     {
       "id": 2,
       "victoryPoints": 2,
-      "hand": {"WOOD": 0, "BRICK": 0, "SHEEP": 0, "WHEAT": 0, "ORE": 0}
+      "hand": { "WOOD": 0, "BRICK": 0, "SHEEP": 0, "WHEAT": 0, "ORE": 0 }
     },
     {
       "id": 3,
       "victoryPoints": 2,
-      "hand": {"WOOD": 0, "BRICK": 0, "SHEEP": 0, "WHEAT": 1, "ORE": 1}
+      "hand": { "WOOD": 0, "BRICK": 0, "SHEEP": 0, "WHEAT": 1, "ORE": 1 }
     }
   ],
   "hexes": [

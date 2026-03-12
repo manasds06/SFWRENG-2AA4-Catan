@@ -23,7 +23,7 @@ public class Demonstrator {
 
 		CatanSimulator sim = new CatanSimulator("src/catan/config.txt");
 		sim.attach(new ConsoleLogger());
-		sim.attach(new JSONStateExporter("state.json"));
+		sim.attach(new JSONStateExporter("2aa4-2026-base/assignments/visualize/state.json"));
 		sim.runSimulation();
 
 		System.out.println("\n[Done] See state.json for the final state.");
@@ -45,7 +45,7 @@ public class Demonstrator {
 
 		CatanSimulator sim = new CatanSimulator("src/catan/config.txt", true);
 		sim.attach(new ConsoleLogger());
-		sim.attach(new JSONStateExporter("state.json"));
+		sim.attach(new JSONStateExporter("2aa4-2026-base/assignments/visualize/state.json"));
 		sim.runSimulation();
 
 		System.out.println("\n[Done] Human simulation complete.");
