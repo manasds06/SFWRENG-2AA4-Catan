@@ -50,7 +50,11 @@ public class ActionPhase implements TurnState {
 		}
 
 		context.notifyObservers();
-		context.setState(new RollingPhase());
+		if (context.isHumanMode()) {
+			context.setState(new WaitForGoState());
+		} else {
+			context.setState(new RollingPhase());
+		}
 	}
 }
 

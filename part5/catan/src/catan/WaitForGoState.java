@@ -14,6 +14,7 @@ public class WaitForGoState implements TurnState {
 			System.out.println("[Step] Waiting for 'go'...");
 		}
 		context.setState(new RollingPhase());
+		context.getState().handleTurn(context, a);
 	}
 }
 

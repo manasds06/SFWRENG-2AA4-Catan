@@ -17,6 +17,7 @@ public class CatanSimulator implements Subject {
 	private SecureRandom rng;
 	private TurnState currentState;
 	private List<Observer> observers;
+	private boolean humanMode;
 
 	public CatanSimulator(String configPath) {
 		this(configPath, false);
@@ -29,6 +30,7 @@ public class CatanSimulator implements Subject {
 	 *                   (WaitForGoState) is active between every turn (R2.4)
 	 */
 	public CatanSimulator(String configPath, boolean humanMode) {
+		this.humanMode = humanMode;
 		this.maxRounds = readTurnsFromConfig(configPath);
 		this.currentRound = 0;
 		this.board = new Board();
@@ -180,4 +182,5 @@ public class CatanSimulator implements Subject {
 	public Dice getDice()            { return dice; }
 	public List<Agent> getAgents()   { return agents; }
 	public int getCurrentRound()     { return currentRound; }
+	public boolean isHumanMode()     { return humanMode; }
 }

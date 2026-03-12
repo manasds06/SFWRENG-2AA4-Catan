@@ -1,0 +1,11 @@
+echo "go"
+sleep 1
+echo "go"
+sleep 1
+echo "go"
+sleep 1
+echo "go"
+sleep 1
+echo "roll"
+sleep 1
+echo "go"

@@ -2,23 +2,23 @@
   "agents": [
     {
       "id": 0,
-      "victoryPoints": 10,
-      "hand": {"WOOD": 2, "BRICK": 2, "SHEEP": 1, "WHEAT": 14, "ORE": 4}
+      "victoryPoints": 2,
+      "hand": {"WOOD": 0, "BRICK": 2, "SHEEP": 0, "WHEAT": 0, "ORE": 1}
     },
     {
       "id": 1,
       "victoryPoints": 2,
-      "hand": {"WOOD": 3, "BRICK": 0, "SHEEP": 3, "WHEAT": 1, "ORE": 0}
+      "hand": {"WOOD": 0, "BRICK": 0, "SHEEP": 0, "WHEAT": 0, "ORE": 0}
     },
     {
       "id": 2,
-      "victoryPoints": 5,
-      "hand": {"WOOD": 2, "BRICK": 0, "SHEEP": 0, "WHEAT": 0, "ORE": 5}
+      "victoryPoints": 2,
+      "hand": {"WOOD": 0, "BRICK": 0, "SHEEP": 0, "WHEAT": 0, "ORE": 0}
     },
     {
       "id": 3,
       "victoryPoints": 2,
-      "hand": {"WOOD": 1, "BRICK": 0, "SHEEP": 0, "WHEAT": 4, "ORE": 0}
+      "hand": {"WOOD": 0, "BRICK": 0, "SHEEP": 0, "WHEAT": 1, "ORE": 1}
     }
   ],
   "hexes": [
@@ -39,8 +39,24 @@
     { "id": 14, "terrain": "WOOD", "token": 6, "robber": false },
     { "id": 15, "terrain": "ORE", "token": 3, "robber": false },
     { "id": 16, "terrain": "SHEEP", "token": 10, "robber": false },
-    { "id": 17, "terrain": "WHEAT", "token": 2, "robber": true },
-    { "id": 18, "terrain": "DESERT", "token": 0, "robber": false }
+    { "id": 17, "terrain": "WHEAT", "token": 2, "robber": false },
+    { "id": 18, "terrain": "DESERT", "token": 0, "robber": true }
   ],
-  "robberHex": 17
+  "robberHex": 18,
+  "roads": [
+    { "a": 9, "b": 19, "owner": "WHITE" },
+    { "a": 0, "b": 1, "owner": "BLUE" },
+    { "a": 4, "b": 5, "owner": "BLUE" },
+    { "a": 27, "b": 37, "owner": "ORANGE" }
+  ],
+  "buildings": [
+    { "node": 0, "owner": "BLUE", "type": "SETTLEMENT" },
+    { "node": 5, "owner": "BLUE", "type": "SETTLEMENT" },
+    { "node": 19, "owner": "WHITE", "type": "SETTLEMENT" },
+    { "node": 37, "owner": "ORANGE", "type": "SETTLEMENT" },
+    { "node": 48, "owner": "WHITE", "type": "SETTLEMENT" },
+    { "node": 49, "owner": "ORANGE", "type": "SETTLEMENT" },
+    { "node": 50, "owner": "RED", "type": "SETTLEMENT" },
+    { "node": 52, "owner": "RED", "type": "SETTLEMENT" }
+  ]
 }
