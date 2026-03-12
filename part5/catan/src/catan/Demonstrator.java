@@ -2,8 +2,8 @@ package catan;
 
 /**
  * Entry point. Two modes:
- *   java -cp bin catan.Demonstrator          -- automated (4 bots)
- *   java -cp bin catan.Demonstrator --human  -- step-forward (you are Player 3)
+ *   java -cp bin catan.Demonstrator
+ *   java -cp bin catan.Demonstrator --human
  *
  * Config: src/catan/config.txt (turns: 1-8192), src/catan/map.txt
  */
@@ -16,10 +16,7 @@ public class Demonstrator {
 	}
 
 	private static void runAutomatedDemo() {
-		System.out.println("╔══════════════════════════════════════════╗");
-		System.out.println("║  DEMO 1 — Automated simulation           ║");
-		System.out.println("║  4 RandomAgents, JSON export enabled     ║");
-		System.out.println("╚══════════════════════════════════════════╝\n");
+		System.out.println("Starting automated simulation...");
 
 		CatanSimulator sim = new CatanSimulator("src/catan/config.txt");
 		sim.attach(new ConsoleLogger());
@@ -30,10 +27,7 @@ public class Demonstrator {
 	}
 
 	private static void runHumanDemo() {
-		System.out.println("╔══════════════════════════════════════════╗");
-		System.out.println("║  DEMO 2 — Human step-forward mode       ║");
-		System.out.println("║  You are Player 3 (last in turn order)  ║");
-		System.out.println("╚══════════════════════════════════════════╝");
+		System.out.println("Starting human step-forward simulation...");
 		System.out.println("\nCommands on your turn:");
 		System.out.println("  roll                        – roll dice and collect resources");
 		System.out.println("  list                        – show board state and your hand");
