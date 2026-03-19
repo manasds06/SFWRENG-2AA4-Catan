@@ -40,15 +40,15 @@ public class CatanSimulator implements Subject {
 		this.agents = new ArrayList<>();
 		this.observers = new ArrayList<>();
 
-		// Create agents: bots for seats 0-2, human or bot for seat 3
-		for (int i = 0; i < 3; i++) {
-			agents.add(new RandomAgent(i, rules));
-		}
+		// Create agents: mix of Strategic and Random AI, or human for seat 3
+		agents.add(new StrategicAgent(0, rules));
+		agents.add(new StrategicAgent(1, rules));
+		agents.add(new RandomAgent(2, rules));
 		if (humanMode) {
 			agents.add(new HumanAgent(3, this));
 			this.currentState = new WaitForGoState();
 		} else {
-			agents.add(new RandomAgent(3, rules));
+			agents.add(new StrategicAgent(3, rules));
 			this.currentState = new RollingPhase();
 		}
 	}
