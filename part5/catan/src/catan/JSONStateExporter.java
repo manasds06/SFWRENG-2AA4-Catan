@@ -1,5 +1,6 @@
 package catan;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
@@ -94,8 +95,15 @@ public class JSONStateExporter implements Observer {
 
 		sb.append("}\n");
 
-		try (FileWriter fw = new FileWriter(outputFilePath)) {
+		try {
+			File outFile = new File(outputFilePath);
+			File parentDir = outFile.getParentFile();
+			if (parentDir != null) {
+				parentDir.mkdirs();
+			}
+			FileWriter fw = new FileWriter(outFile);
 			fw.write(sb.toString());
+			fw.close();
 		} catch (IOException e) {
 			System.err.println("JSONStateExporter: failed to write " + outputFilePath + " — " + e.getMessage());
 		}
