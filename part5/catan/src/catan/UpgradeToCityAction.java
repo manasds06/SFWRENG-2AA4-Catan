@@ -16,5 +16,10 @@ public class UpgradeToCityAction extends Action {
 	public String describe() {
 		return "Upgraded to city at node " + target.getId();
 	}
+
+	@Override
+	public void accept(ActionVisitor v) {
+		v.visit(this);
+	}
 }
 

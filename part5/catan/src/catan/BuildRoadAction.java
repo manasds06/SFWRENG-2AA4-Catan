@@ -16,5 +16,10 @@ public class BuildRoadAction extends Action {
 	public String describe() {
 		return "Built road at edge " + target.getId();
 	}
+
+	@Override
+	public void accept(ActionVisitor v) {
+		v.visit(this);
+	}
 }
 

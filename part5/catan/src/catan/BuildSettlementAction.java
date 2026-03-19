@@ -16,5 +16,10 @@ public class BuildSettlementAction extends Action {
 	public String describe() {
 		return "Built settlement at node " + target.getId();
 	}
+
+	@Override
+	public void accept(ActionVisitor v) {
+		v.visit(this);
+	}
 }
 

@@ -22,6 +22,11 @@ public class ListBoardAction extends Action {
 	public String describe() {
 		return "Listed board and hand";
 	}
+
+	@Override
+	public void accept(ActionVisitor v) {
+		// Human-mode action — not evaluated by AI visitors
+	}
 }
 
 

@@ -11,5 +11,10 @@ public class EndTurnAction extends Action {
 	public String describe() {
 		return "Ended turn";
 	}
+
+	@Override
+	public void accept(ActionVisitor v) {
+		// Human-mode action — not evaluated by AI visitors
+	}
 }
 

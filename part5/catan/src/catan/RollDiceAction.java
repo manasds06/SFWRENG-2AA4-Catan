@@ -26,5 +26,10 @@ public class RollDiceAction extends Action {
 	public String describe() {
 		return "Rolled dice";
 	}
+
+	@Override
+	public void accept(ActionVisitor v) {
+		// Human-mode action — not evaluated by AI visitors
+	}
 }
 
