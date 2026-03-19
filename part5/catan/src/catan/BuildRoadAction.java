@@ -13,6 +13,16 @@ public class BuildRoadAction extends Action {
 		return b.placeRoad(a, target);
 	}
 
+	@Override
+	public boolean undo(Board b, Agent a) {
+		target.owner = null;
+		a.refund(Cost.ROAD);
+		return true;
+	}
+
+	@Override
+	public boolean isUndoable() { return true; }
+
 	public String describe() {
 		return "Built road at edge " + target.getId();
 	}

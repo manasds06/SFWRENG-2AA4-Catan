@@ -12,12 +12,22 @@ public class CommandParser {
 	private static final Pattern P_SETTLEMENT = Pattern.compile("^build\\s+settlement\\s+(\\d+)$", Pattern.CASE_INSENSITIVE);
 	private static final Pattern P_CITY       = Pattern.compile("^build\\s+city\\s+(\\d+)$",       Pattern.CASE_INSENSITIVE);
 	private static final Pattern P_ROAD       = Pattern.compile("^build\\s+road\\s+(\\d+)\\s+(\\d+)$", Pattern.CASE_INSENSITIVE);
+	private static final Pattern P_UNDO       = Pattern.compile("^undo$", Pattern.CASE_INSENSITIVE);
+	private static final Pattern P_REDO       = Pattern.compile("^redo$", Pattern.CASE_INSENSITIVE);
 
 	private Board board;
 	private CatanSimulator context;
 
 	public void setBoard(Board board)             { this.board   = board;   }
 	public void setContext(CatanSimulator context) { this.context = context; }
+
+	public boolean isUndo(String input) {
+		return input != null && P_UNDO.matcher(input.trim()).matches();
+	}
+
+	public boolean isRedo(String input) {
+		return input != null && P_REDO.matcher(input.trim()).matches();
+	}
 
 	public Action parse(String input) {
 		if (input == null || input.isBlank()) {
@@ -75,7 +85,7 @@ public class CommandParser {
 		}
 
 		System.out.println("Unknown command: \"" + s + "\"");
-		System.out.println("Commands: roll | go | list | build settlement <id> | build city <id> | build road <id1> <id2>");
+		System.out.println("Commands: roll | go | list | undo | redo | build settlement <id> | build city <id> | build road <id1> <id2>");
 		return null;
 	}
 }

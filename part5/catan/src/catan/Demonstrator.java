@@ -34,6 +34,8 @@ public class Demonstrator {
 		System.out.println("  build settlement <nodeId>   – place a settlement");
 		System.out.println("  build city <nodeId>         – upgrade settlement to city");
 		System.out.println("  build road <id1> <id2>      – place a road between two nodes");
+		System.out.println("  undo                        – undo your last build action");
+		System.out.println("  redo                        – redo a previously undone action");
 		System.out.println("  go                          – end your turn\n");
 		System.out.println("Between every turn type 'go' to step forward.\n");
 

@@ -13,6 +13,18 @@ public class BuildSettlementAction extends Action {
 		return b.placeSettlement(a, target);
 	}
 
+	@Override
+	public boolean undo(Board b, Agent a) {
+		target.owner = null;
+		target.building = BuildingType.NONE;
+		a.refund(Cost.SETTLEMENT);
+		a.addVictoryPoints(-1);
+		return true;
+	}
+
+	@Override
+	public boolean isUndoable() { return true; }
+
 	public String describe() {
 		return "Built settlement at node " + target.getId();
 	}

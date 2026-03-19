@@ -18,6 +18,8 @@ public class CatanSimulator implements Subject {
 	private TurnState currentState;
 	private List<Observer> observers;
 	private boolean humanMode;
+	private Agent currentAgent;
+	private CommandHistory commandHistory;
 
 	public CatanSimulator(String configPath) {
 		this(configPath, false);
@@ -39,6 +41,7 @@ public class CatanSimulator implements Subject {
 		this.rng = new SecureRandom();
 		this.agents = new ArrayList<>();
 		this.observers = new ArrayList<>();
+		this.commandHistory = new CommandHistory();
 
 		// Create agents: mix of Strategic and Random AI, or human for seat 3
 		agents.add(new StrategicAgent(0, rules));
@@ -136,6 +139,7 @@ public class CatanSimulator implements Subject {
 	}
 
 	private void runTurn(Agent a) {
+		this.currentAgent = a;
 		currentState.handleTurn(this, a);
 	}
 
@@ -174,6 +178,42 @@ public class CatanSimulator implements Subject {
 
 	public void stepForward() {
 		if (!agents.isEmpty()) currentState.handleTurn(this, agents.get(currentRound % agents.size()));
+	}
+
+	// ── Undo / Redo (R3.1)
+
+	void recordAction(Action a) {
+		if (a.isUndoable()) {
+			commandHistory.push(a);
+		}
+	}
+
+	void resetHistory() {
+		commandHistory = new CommandHistory();
+	}
+
+	public boolean undo() {
+		Action action = commandHistory.undo();
+		if (action == null) {
+			System.out.println("Nothing to undo.");
+			return false;
+		}
+		action.undo(board, currentAgent);
+		logAction(currentRound, currentAgent.getId(), "Undo: " + action.describe());
+		notifyObservers();
+		return true;
+	}
+
+	public boolean redo() {
+		Action action = commandHistory.redo();
+		if (action == null) {
+			System.out.println("Nothing to redo.");
+			return false;
+		}
+		action.execute(board, currentAgent);
+		logAction(currentRound, currentAgent.getId(), "Redo: " + action.describe());
+		notifyObservers();
+		return true;
 	}
 
 	// ── Accessors ──────────────────────────────────────────────────

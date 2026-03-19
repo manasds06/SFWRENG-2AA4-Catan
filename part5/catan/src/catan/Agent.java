@@ -56,6 +56,12 @@ public abstract class Agent {
 		}
 	}
 
+	public void refund(Cost c) {
+		for (java.util.Map.Entry<ResourceType, Integer> entry : c.getRequired().entrySet()) {
+			hand.add(entry.getKey(), entry.getValue());
+		}
+	}
+
 	public boolean checkHandLimit() {
 		return hand.getTotalCards() > 7;
 	}

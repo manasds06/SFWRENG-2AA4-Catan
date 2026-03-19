@@ -7,12 +7,25 @@ public class ActionPhase implements TurnState {
 		Board board = context.getBoard();
 
 		if (a instanceof HumanAgent) {
+			HumanAgent human = (HumanAgent) a;
 			boolean rolled = false;
+			context.resetHistory();
+
 			while (true) {
-				Action action = a.chooseAction(board);
+				String input = human.readInput();
+
+				if (human.getParser().isUndo(input)) {
+					context.undo();
+					continue;
+				}
+				if (human.getParser().isRedo(input)) {
+					context.redo();
+					continue;
+				}
+
+				Action action = human.parseAction(input, board);
 				if (action == null) continue;
 
-				// Enforce roll-first rule
 				if (!rolled && !(action instanceof RollDiceAction)) {
 					System.out.println("You must roll first. Type: roll");
 					continue;
@@ -34,7 +47,15 @@ public class ActionPhase implements TurnState {
 					break;
 				}
 
+				if (action instanceof ListBoardAction) {
+					action.execute(board, a);
+					continue;
+				}
+
 				boolean ok = action.execute(board, a);
+				if (ok) {
+					context.recordAction(action);
+				}
 				context.logAction(context.getCurrentRound(), a.getId(),
 						action.describe() + (ok ? "" : " (failed — check resources/placement rules)"));
 			}

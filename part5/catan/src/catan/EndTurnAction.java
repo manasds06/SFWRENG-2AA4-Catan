@@ -8,6 +8,12 @@ public class EndTurnAction extends Action {
 	}
 
 	@Override
+	public boolean undo(Board b, Agent a) { return false; }
+
+	@Override
+	public boolean isUndoable() { return false; }
+
+	@Override
 	public String describe() {
 		return "Ended turn";
 	}

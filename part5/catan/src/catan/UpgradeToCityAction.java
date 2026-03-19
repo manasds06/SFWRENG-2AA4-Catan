@@ -13,6 +13,17 @@ public class UpgradeToCityAction extends Action {
 		return b.upgradeToCity(a, target);
 	}
 
+	@Override
+	public boolean undo(Board b, Agent a) {
+		target.building = BuildingType.SETTLEMENT;
+		a.refund(Cost.CITY);
+		a.addVictoryPoints(-1);
+		return true;
+	}
+
+	@Override
+	public boolean isUndoable() { return true; }
+
 	public String describe() {
 		return "Upgraded to city at node " + target.getId();
 	}

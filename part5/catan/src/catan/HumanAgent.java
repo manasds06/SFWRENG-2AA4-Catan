@@ -17,15 +17,23 @@ public class HumanAgent extends Agent {
 
 	@Override
 	public Action chooseAction(Board b) {
-		parser.setBoard(b);
-		parser.setContext(context);
-		return parser.parse(readCommandLineInput());
+		return parseAction(readInput(), b);
 	}
 
-	private String readCommandLineInput() {
+	public String readInput() {
 		System.out.print("Player " + getId() + " > ");
 		if (scanner.hasNextLine()) return scanner.nextLine().trim();
 		return "";
+	}
+
+	public Action parseAction(String input, Board b) {
+		parser.setBoard(b);
+		parser.setContext(context);
+		return parser.parse(input);
+	}
+
+	public CommandParser getParser() {
+		return parser;
 	}
 }
 
