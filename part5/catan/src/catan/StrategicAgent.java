@@ -93,13 +93,7 @@ public class StrategicAgent extends Agent {
 
 		for (Action action : candidates) {
 			action.accept(visitor);
-
-			double actionScore;
-			if (visitor instanceof ValueEvaluationVisitor) {
-				actionScore = ((ValueEvaluationVisitor) visitor).getScore();
-			} else {
-				actionScore = ((ConstraintCheckVisitor) visitor).getScore();
-			}
+			double actionScore = visitor.getScore();
 
 			if (actionScore > bestScore) {
 				bestScore = actionScore;

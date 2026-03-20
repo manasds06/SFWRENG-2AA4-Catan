@@ -11,4 +11,5 @@ public interface ActionVisitor {
 	void visit(BuildSettlementAction a);
 	void visit(BuildRoadAction a);
 	void visit(UpgradeToCityAction a);
+	double getScore();
 }
