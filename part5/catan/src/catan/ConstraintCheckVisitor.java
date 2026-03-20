@@ -76,8 +76,7 @@ public class ConstraintCheckVisitor implements ActionVisitor {
 	@Override
 	public void visit(BuildRoadAction a) {
 		score = 0.0;
-		if (roadGapExists) {
-			// Building a road that bridges a gap is highest priority
+		if (roadGapExists && gapEdges.contains(a.getTarget())) {
 			score = 1.0;
 		} else if (longestRoadThreatened) {
 			// Extending to defend longest road

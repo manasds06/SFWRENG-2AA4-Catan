@@ -7,6 +7,8 @@ public class BuildRoadAction extends Action {
 		this.target = target;
 	}
 
+	public Edge getTarget() { return target; }
+
 	public boolean execute(Board b, Agent a) {
 		if (!a.canAfford(Cost.ROAD)) return false;
 		a.pay(Cost.ROAD);
