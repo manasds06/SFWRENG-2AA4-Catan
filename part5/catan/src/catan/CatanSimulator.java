@@ -48,7 +48,7 @@ public class CatanSimulator implements Subject {
 		agents.add(new StrategicAgent(1, rules));
 		agents.add(new RandomAgent(2, rules));
 		if (humanMode) {
-			agents.add(new HumanAgent(3, this));
+			agents.add(new HumanAgent(3));
 			this.currentState = new WaitForGoState();
 		} else {
 			agents.add(new StrategicAgent(3, rules));

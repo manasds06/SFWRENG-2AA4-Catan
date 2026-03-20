@@ -16,10 +16,8 @@ public class CommandParser {
 	private static final Pattern P_REDO       = Pattern.compile("^redo$", Pattern.CASE_INSENSITIVE);
 
 	private Board board;
-	private CatanSimulator context;
 
-	public void setBoard(Board board)             { this.board   = board;   }
-	public void setContext(CatanSimulator context) { this.context = context; }
+	public void setBoard(Board board) { this.board = board; }
 
 	public boolean isUndo(String input) {
 		return input != null && P_UNDO.matcher(input.trim()).matches();
@@ -29,15 +27,16 @@ public class CommandParser {
 		return input != null && P_REDO.matcher(input.trim()).matches();
 	}
 
+	public boolean isRoll(String input) {
+		return input != null && P_ROLL.matcher(input.trim()).matches();
+	}
+
 	public Action parse(String input) {
 		if (input == null || input.isBlank()) {
 			return null;
 		}
 		String s = input.trim();
 
-		if (P_ROLL.matcher(s).matches()) {
-			return new RollDiceAction(context);
-		}
 		if (P_GO.matcher(s).matches()) {
 			return new EndTurnAction();
 		}

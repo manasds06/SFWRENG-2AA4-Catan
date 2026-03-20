@@ -22,23 +22,28 @@ public class ActionPhase implements TurnState {
 					context.redo();
 					continue;
 				}
+				if (human.getParser().isRoll(input)) {
+					if (!rolled) {
+						int roll = context.getDice().roll2d6();
+						context.logAction(context.getCurrentRound(), a.getId(), "Rolled " + roll);
+						if (roll == 7) {
+							context.setState(new RobberPhase());
+							context.getState().handleTurn(context, a);
+						} else {
+							board.distributeResources(roll);
+						}
+						rolled = true;
+					} else {
+						System.out.println("Already rolled this turn.");
+					}
+					continue;
+				}
 
 				Action action = human.parseAction(input, board);
 				if (action == null) continue;
 
-				if (!rolled && !(action instanceof RollDiceAction)) {
+				if (!rolled) {
 					System.out.println("You must roll first. Type: roll");
-					continue;
-				}
-
-				if (action instanceof RollDiceAction) {
-					if (!rolled) {
-						action.execute(board, a);
-						rolled = true;
-						context.logAction(context.getCurrentRound(), a.getId(), "Rolled dice");
-					} else {
-						System.out.println("Already rolled this turn.");
-					}
 					continue;
 				}
 
