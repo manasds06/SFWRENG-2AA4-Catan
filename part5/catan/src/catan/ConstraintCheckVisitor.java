@@ -1,6 +1,7 @@
 package catan;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,6 +35,7 @@ public class ConstraintCheckVisitor implements ActionVisitor {
 	private final boolean roadGapExists;
 	private final boolean longestRoadThreatened;
 	private final List<Edge> gapEdges;
+	private final Set<Edge> longestChainExtendingEdges;
 
 	public ConstraintCheckVisitor(Board board, Agent agent, List<Agent> allAgents) {
 		this.board = board;
@@ -45,6 +47,7 @@ public class ConstraintCheckVisitor implements ActionVisitor {
 		this.gapEdges = findRoadGapEdges(board, agent, 2);
 		this.roadGapExists = !gapEdges.isEmpty();
 		this.longestRoadThreatened = isLongestRoadThreatened();
+		this.longestChainExtendingEdges = longestRoadThreatened ? findLongestChainExtendingEdges(board, agent) : Collections.emptySet();
 	}
 
 	public double getScore() {
@@ -78,8 +81,8 @@ public class ConstraintCheckVisitor implements ActionVisitor {
 		score = 0.0;
 		if (roadGapExists && gapEdges.contains(a.getTarget())) {
 			score = 1.0;
-		} else if (longestRoadThreatened) {
-			// Extending to defend longest road
+		} else if (longestRoadThreatened && longestChainExtendingEdges.contains(a.getTarget())) {
+			// Only roads at the open tips of the longest chain defend it
 			score = 0.9;
 		} else if (handLimitExceeded) {
 			// Road spends 2 cards — helps reduce hand, but less than settlement
@@ -101,6 +104,89 @@ public class ConstraintCheckVisitor implements ActionVisitor {
 	}
 
 	// ── Constraint detection helpers ─────────────────────────────────
+
+	/**
+	 * Returns the set of unowned edges that are incident to the open
+	 * endpoint nodes of the agent's longest road chain.
+	 */
+	private Set<Edge> findLongestChainExtendingEdges(Board board, Agent agent) {
+		// Gather all agent-owned edges
+		Set<Edge> agentEdges = new HashSet<>();
+		for (Edge e : board.getEdges().values()) {
+			if (e.getOwner() == agent) agentEdges.add(e);
+		}
+		if (agentEdges.isEmpty()){
+			return Collections.emptySet();
+		}
+
+		// Find the starting edge that produces the longest DFS path
+		Edge bestStart = null;
+		int bestLength = 0;
+
+		for (Edge start : agentEdges) {
+			int length = dfsRoad(start, agent, new HashSet<>(), agentEdges);
+			if (length > bestLength) {
+				bestLength = length;
+				bestStart = start;
+			}
+		}
+
+		if (bestStart == null){
+			return Collections.emptySet();
+		}
+
+		// Re-trace to collect the actual chain
+		Set<Edge> chainEdges = new HashSet<>();
+		collectLongestChain(bestStart, agent, agentEdges, chainEdges, bestLength);
+
+		// Collect all nodes that are endpoints of edges in the chain
+		Set<Node> chainNodes = new HashSet<>();
+		for (Edge e : chainEdges) {
+			chainNodes.add(e.getA());
+			chainNodes.add(e.getB());
+		}
+
+		// The "tip" nodes are chain nodes that touch only ONE chain edge
+		Set<Edge> extendingEdges = new HashSet<>();
+		for (Node n : chainNodes) {
+			int chainDegree = 0;
+			for (Edge e : n.edges) {
+				if (chainEdges.contains(e)) chainDegree++;
+			}
+			if (chainDegree == 1) {
+				// This node is a tip, any unowned adjacent edge extends the chain
+				for (Edge e : n.edges) {
+					if (e.getOwner() == null) extendingEdges.add(e);
+				}
+			}
+		}
+		return extendingEdges;
+	}
+
+	/**
+	 * DFS helper that also accumulates the edges on the winning path into chain. 
+	 * Returns the length of the longest sub-path from current.
+	 */
+	private static int collectLongestChain(Edge current, Agent agent,
+			Set<Edge> agentEdges, Set<Edge> chain, int targetLength) {
+		chain.add(current);
+		if (chain.size() == targetLength) return targetLength;
+
+		List<Edge> neighbors = new ArrayList<>();
+		for (Edge e : current.getA().edges) {
+			if (e != current && agentEdges.contains(e) && !chain.contains(e)) neighbors.add(e);
+		}
+		for (Edge e : current.getB().edges) {
+			if (e != current && agentEdges.contains(e) && !chain.contains(e)) neighbors.add(e);
+		}
+
+		for (Edge next : neighbors) {
+			int result = collectLongestChain(next, agent, agentEdges, chain, targetLength);
+			if (result == targetLength) return result;
+		}
+		chain.remove(current);
+		return chain.size();
+	}
 
 	/**
 	 * R3.3: Check if any opponent's longest road is within 1 of this agent's.
